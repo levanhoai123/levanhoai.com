@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiếm Tiền Bằng Quảng Cáo</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f9f9f9; height: 100vh; overflow: hidden; }
+        .sidebar { width: 60px; background: #007bff; height: 95vh; position: fixed; left: 10px; top: 10px; transition: 0.3s; box-shadow: 3px 0 5px rgba(0,0,0,0.2); z-index: 1100; display: flex; flex-direction: column; align-items: center; overflow: hidden; border-radius: 10px; padding-top: 20px; }
+        .sidebar.expanded { width: 250px; align-items: flex-start; }
+        .menu-btn { font-size: 30px; border: none; background: none; color: white; cursor: pointer; }
+        .menu-items { display: flex; flex-direction: column; align-items: center; width: 100%; margin-top: 20px; }
+        .menu-items a { color: white; text-decoration: none; font-size: 20px; padding: 15px; width: 100%; text-align: left; display: flex; align-items: center; transition: 0.3s; white-space: nowrap; overflow: hidden; border-radius: 5px; justify-content: center; }
+        .menu-items a i { margin-right: 10px; }
+        .menu-items a span { display: none; }
+        .sidebar.expanded .menu-items a { justify-content: flex-start; }
+        .sidebar.expanded .menu-items a span { display: inline; }
+        .menu-items a:hover { background: #0056b3; }
+
+        .container { width: 80%; max-width: 900px; padding: 20px; background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-radius: 10px; position: relative; top: 50px; margin: auto; z-index: 1000; }
+        .section { display: none; padding: 20px; }
+        .section.active { display: block; }
+        .btn { display: inline-block; padding: 10px 15px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; transition: 0.3s; }
+        .btn:hover { background: #0056b3; }
+
+        .dashboard { display: flex; flex-wrap: wrap; justify-content: space-between; }
+        .dashboard-box { background: #eef; padding: 20px; border-radius: 10px; flex: 1; min-width: 250px; margin: 10px; text-align: center; box-shadow: 2px 2px 10px rgba(0,0,0,0.1); }
+        .dashboard-box h3 { margin: 0 0 10px; font-size: 18px; color: #333; }
+        .dashboard-box p { font-size: 24px; font-weight: bold; color: #007bff; }
+
+        .account-settings { display: flex; }
+        .nav-panel { width: 200px; padding: 10px; background: #eef; border-radius: 10px; margin-right: 20px; }
+        .nav-panel button { width: 100%; padding: 10px; margin: 5px 0; border: none; background: #007bff; color: white; cursor: pointer; border-radius: 5px; transition: 0.3s; }
+        .nav-panel button:hover { background: #0056b3; }
+        .content-panel { flex-grow: 1; padding: 20px; background: white; border-radius: 10px; box-shadow: 2px 2px 10px rgba(0,0,0,0.1); }
+
+        video { margin: 20px 0; }
+        .hidden { display: none; }
+        form { margin: 20px 0; }
+        input, select { padding: 8px; margin: 5px 0; width: 200px; border: 1px solid #ccc; border-radius: 5px; }
+        .btn1 { width: 100%; padding: 10px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .btn1:hover { background: #0056b3; }
+        .history { margin-top: 20px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+        th { background: #007bff; color: white; }
+    </style>
+</head>
+<body>
+    <div class="sidebar" id="sidebar">
+        <button class="menu-btn" onclick="toggleMenu()">☰</button>
+        <div class="menu-items">
+            <a href="#" onclick="showSection('home')">🏠 <span>Trang chủ</span></a>
+            <a href="#" onclick="showSection('tasks')">🎯 <span>Nhiệm vụ</span></a>
+            <a href="#" onclick="showSection('account')">👤 <span>Cài đặt tài khoản</span></a>
+            <a href="#" onclick="showSection('withdraw')">💰 <span>Rút tiền</span></a>
+            <a href="#" onclick="showSection('faq')">❓ <span>Hỏi đáp</span></a>
+            <a href="#" onclick="logout()" id="logoutLink" class="hidden">🚪 <span>Đăng xuất</span></a>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Trang đăng nhập -->
+        <div id="login" class="section active">
+            <h2>Đăng Nhập</h2>
+            <form id="loginForm">
+                <label for="loginUsername">Tên người dùng:</label><br>
+                <input type="text" id="loginUsername" required><br>
+                <label for="loginPassword">Mật khẩu:</label><br>
+                <input type="password" id="loginPassword" required><br>
+                <button type="submit" class="btn">Đăng Nhập</button>
+            </form>
+            <p>Chưa có tài khoản? <a href="#" onclick="showSection('register')">Đăng ký</a></p>
+        </div>
+
+        <!-- Trang đăng ký -->
+        <div id="register" class="section">
+            <h2>Đăng Ký Tài Khoản</h2>
+            <form id="registerForm">
+                <label for="username">Tên người dùng:</label><br>
+                <input type="text" id="username" required><br>
+                <label for="email">Email:</label><br>
+                <input type="email" id="email" required><br>
+                <label for="password">Mật khẩu:</label><br>
+                <input type="password" id="password" required><br>
+                <button type="submit" class="btn">Đăng Ký</button>
+            </form>
+            <p>Đã có tài khoản? <a href="#" onclick="showSection('login')">Đăng nhập</a></p>
+        </div>
+
+        <!-- Trang chủ -->
+        <div id="home" class="section">
+            <h2>Trang chủ</h2>
+            <div class="dashboard">
+                <div class="dashboard-box">
+                    <h3>Số dư</h3>
+                    <p id="balance">0 VNĐ</p>
+                </div>
+                <div class="dashboard-box">
+                    <h3>Nhiệm vụ đã làm</h3>
+                    <p id="taskCount">0</p>
+                </div>
+                <div class="dashboard-box">
+                    <h3>Rút tiền gần nhất</h3>
+                    <p id="lastWithdraw">Chưa có giao dịch</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trang nhiệm vụ -->
+        <div id="tasks" class="section">
+            <h2>Nhiệm vụ</h2>
+            <a href="https://www.effectiveratecpm.com/fufn6sq8ms?key=20d9a515e885c3fe767e70971f5b1e4f" id="getTaskBtn" class="btn" target="_blank" onclick="handleTaskClick(event)">Nhận nhiệm vụ</a>
+            <div id="adContainer" class="hidden">
+                <video id="adVideo" width="600" controls>
+                    <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+                    Trình duyệt của bạn không hỗ trợ video.
+                </video>
+                <button id="rewardBtn" class="btn hidden">Nhận thưởng (10 VNĐ)</button>
+            </div>
+            <h3>Hướng dẫn làm nhiệm vụ</h3>
+            <p>Bước 1: Nhấn "Nhận nhiệm vụ" để mở quảng cáo và bắt đầu.</p>
+            <p>Bước 2: Xem video quảng cáo đến hết.</p>
+            <p>Bước 3: Nhấn "Nhận thưởng" khi hoàn thành.</p>
+        </div>
+
+        <!-- Trang cài đặt tài khoản -->
+        <div id="account" class="section">
+            <h2>Cài đặt tài khoản</h2>
+            <div class="account-settings">
+                <div class="nav-panel">
+                    <button onclick="showContent('personal-info')">Thông tin cá nhân</button>
+                    <button onclick="showContent('bank-info')">Tài khoản ngân hàng</button>
+                </div>
+                <div class="content-panel">
+                    <div id="personal-info">
+                        <p>Tên người dùng: <span id="dashUsername"></span></p>
+                        <p>Email: <span id="dashEmail"></span></p>
+                    </div>
+                    <div id="bank-info" style="display: none;">
+                        <h3>Thông tin tài khoản ngân hàng</h3>
+                        <form id="bankForm">
+                            <label for="fullName">Họ và tên:</label><br>
+                            <input type="text" id="fullName" placeholder="Nhập họ và tên"><br>
+                            <label for="accountNumber">Số tài khoản:</label><br>
+                            <input type="text" id="accountNumber" placeholder="Nhập số tài khoản"><br>
+                            <label for="bankName">Ngân hàng:</label><br>
+                            <select id="bankName">
+                                <option value="">Chọn ngân hàng</option>
+                                <option value="Vietcombank">Vietcombank</option>
+                                <option value="Techcombank">Techcombank</option>
+                                <option value="MB Bank">MB Bank</option>
+                                <option value="VPBank">VPBank</option>
+                                <option value="Agribank">Agribank</option>
+                            </select><br>
+                            <button type="submit" class="btn" style="margin-top: 10px;">Lưu thông tin</button>
+                        </form>
+                        <p id="bankInfoDisplay" style="margin-top: 10px;"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trang rút tiền -->
+        <div id="withdraw" class="section">
+            <h2>Rút Tiền</h2>
+            <select id="withdrawAmount">
+                <option value="50000">50,000 VNĐ</option>
+                <option value="100000">100,000 VNĐ</option>
+                <option value="500000">500,000 VNĐ</option>
+                <option value="1000000">1,000,000 VNĐ</option>
+            </select>
+            <button class="btn1" onclick="withdrawMoney()">Rút tiền</button>
+            <div class="history">
+                <h3>Lịch sử rút tiền</h3>
+                <table>
+                    <thead>
+                        <tr><th>Số tiền</th><th>Thời gian</th></tr>
+                    </thead>
+                    <tbody id="withdrawHistory"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Trang hỏi đáp -->
+        <div id="faq" class="section">
+            <h2>Hỏi Đáp</h2>
+            <h3>Hỏi xoáy đáp nhanh</h3>
+            <input type="text" id="questionInput" placeholder="Nhập câu hỏi của bạn..." style="width: 100%;">
+            <button class="btn" onclick="submitQuestion()">Gửi đi</button>
+            <p id="answerOutput" style="margin-top: 10px; font-style: italic;"></p>
+        </div>
+    </div>
+
+    <!-- Chèn mã Adsterra Pop-under toàn trang -->
+    <script type='text/javascript' src='//pl25955918.effectiveratecpm.com/96/f2/07/96f20718c0568a5f71c4bf09a3666d33.js'></script>
+
+    <script>
+        // Quản lý sidebar
+        let sidebar = document.getElementById("sidebar");
+        sidebar.addEventListener("mouseenter", () => sidebar.classList.add("expanded"));
+        sidebar.addEventListener("mouseleave", () => sidebar.classList.remove("expanded"));
+        document.addEventListener("click", (event) => {
+            if (!sidebar.contains(event.target) && !event.target.classList.contains("menu-btn")) {
+                sidebar.classList.remove("expanded");
+            }
+        });
+        function toggleMenu() {
+            sidebar.classList.toggle("expanded");
+        }
+
+        // Quản lý section
+        function showSection(id) {
+            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            if (currentUser && (id !== 'login' && id !== 'register')) {
+                document.getElementById('logoutLink').classList.remove('hidden');
+            } else {
+                document.getElementById('logoutLink').classList.add('hidden');
+            }
+            if (id !== 'tasks') {
+                document.getElementById('adContainer').classList.add('hidden');
+                document.getElementById('rewardBtn').classList.add('hidden');
+            }
+            if (id === 'account' && currentUser) {
+                updateBankInfo();
+            }
+        }
+
+        // Quản lý content trong cài đặt tài khoản
+        function showContent(id) {
+            document.querySelectorAll('.content-panel > div').forEach(div => div.style.display = 'none');
+            document.getElementById(id).style.display = 'block';
+            if (id === 'bank-info' && currentUser) {
+                updateBankInfo();
+            }
+        }
+
+        // Lưu trữ dữ liệu
+        let users = JSON.parse(localStorage.getItem('users')) || [];
+        let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+        let taskCount = parseInt(localStorage.getItem('taskCount')) || 0;
+
+        // Đăng ký
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            if (users.find(u => u.username === username)) {
+                alert('Tên người dùng đã tồn tại!');
+            } else if (users.find(u => u.email === email)) {
+                alert('Email đã được sử dụng!');
+            } else {
+                users.push({ username, email, password, balance: 0, history: [], bankInfo: {} });
+                localStorage.setItem('users', JSON.stringify(users));
+                alert('Đăng ký thành công! Hãy đăng nhập.');
+                showSection('login');
+            }
+        });
+
+        // Đăng nhập
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+
+            const user = users.find(u => u.username === username && u.password === password);
+            if (user) {
+                currentUser = user;
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                updateDashboard();
+                showSection('home');
+            } else {
+                alert('Sai tên người dùng hoặc mật khẩu!');
+            }
+        });
+
+        // Nhận nhiệm vụ với Direct Link
+        function handleTaskClick(event) {
+            if (!currentUser) {
+                alert('Vui lòng đăng nhập để nhận nhiệm vụ!');
+                showSection('login');
+                event.preventDefault();
+                return;
+            }
+            // Mở Direct Link trong tab mới, sau đó tiếp tục hiển thị video
+            setTimeout(() => {
+                const adContainer = document.getElementById('adContainer');
+                adContainer.classList.remove('hidden');
+                const video = document.getElementById('adVideo');
+                video.currentTime = 0;
+                video.play();
+            }, 100); // Delay nhẹ để không xung đột với tab mới
+        }
+
+        // Xử lý quảng cáo
+        const video = document.getElementById('adVideo');
+        const rewardBtn = document.getElementById('rewardBtn');
+        if (video && rewardBtn) {
+            video.onended = function() {
+                rewardBtn.classList.remove('hidden');
+            };
+            rewardBtn.onclick = function() {
+                if (currentUser) {
+                    currentUser.balance += 10;
+                    taskCount += 1;
+                    currentUser.history.push(`+10 VNĐ từ quảng cáo (${new Date().toLocaleString()})`);
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    localStorage.setItem('taskCount', taskCount);
+                    users = users.map(u => u.username === currentUser.username ? currentUser : u);
+                    localStorage.setItem('users', JSON.stringify(users));
+                    updateDashboard();
+                    alert('Bạn đã nhận 10 VNĐ!');
+                    rewardBtn.classList.add('hidden');
+                    document.getElementById('adContainer').classList.add('hidden');
+                }
+            };
+        }
+
+        // Cập nhật dashboard
+        function updateDashboard() {
+            if (currentUser) {
+                document.getElementById('balance').textContent = `${currentUser.balance} VNĐ`;
+                document.getElementById('taskCount').textContent = taskCount;
+                document.getElementById('lastWithdraw').textContent = currentUser.history.length > 0 ? currentUser.history[currentUser.history.length - 1] : 'Chưa có giao dịch';
+                document.getElementById('dashUsername').textContent = currentUser.username;
+                document.getElementById('dashEmail').textContent = currentUser.email;
+            }
+        }
+
+        // Đăng xuất
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            showSection('login');
+        }
+
+        // Rút tiền và gửi qua mailto
+        function withdrawMoney() {
+            let amount = parseInt(document.getElementById("withdrawAmount").value);
+            if (!currentUser || currentUser.balance < amount) {
+                alert("Số dư không đủ để rút tiền!");
+                return;
+            }
+            if (!currentUser.bankInfo || !currentUser.bankInfo.fullName || !currentUser.bankInfo.accountNumber || !currentUser.bankInfo.bankName) {
+                alert("Vui lòng nhập đầy đủ thông tin tài khoản ngân hàng trước khi rút tiền!");
+                showSection('account');
+                showContent('bank-info');
+                return;
+            }
+
+            const subject = encodeURIComponent("Yêu cầu rút tiền");
+            const body = encodeURIComponent(
+                `Số tiền: ${amount} VNĐ\n` +
+                `Ngân hàng: ${currentUser.bankInfo.bankName}\n` +
+                `Số tài khoản: ${currentUser.bankInfo.accountNumber}\n` +
+                `Tên người dùng: ${currentUser.username}\n` +
+                `Email: ${currentUser.email}`
+            );
+            window.location.href = `mailto:hoai741412@gmail.com?subject=${subject}&body=${body}`;
+
+            let historyTable = document.getElementById("withdrawHistory");
+            let newRow = historyTable.insertRow();
+            newRow.innerHTML = `<td>${amount} VNĐ</td><td>${new Date().toLocaleString()}</td>`;
+            currentUser.balance -= amount;
+            currentUser.history.push(`Rút ${amount} VNĐ (${new Date().toLocaleString()})`);
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            users = users.map(u => u.username === currentUser.username ? currentUser : u);
+            localStorage.setItem('users', JSON.stringify(users));
+            updateDashboard();
+            alert("Vui lòng nhấn 'Send' trong ứng dụng email để hoàn tất yêu cầu rút tiền!");
+        }
+
+        // Hỏi đáp và gửi qua mailto
+        function submitQuestion() {
+            let question = document.getElementById("questionInput").value.trim();
+            let answerOutput = document.getElementById("answerOutput");
+            if (question === "") {
+                answerOutput.textContent = "Vui lòng nhập câu hỏi!";
+                return;
+            }
+            if (!currentUser) {
+                answerOutput.textContent = "Vui lòng đăng nhập để gửi câu hỏi!";
+                showSection('login');
+                return;
+            }
+
+            const subject = encodeURIComponent("Câu hỏi từ người dùng");
+            const body = encodeURIComponent(
+                `Câu hỏi: ${question}\n` +
+                `Tên người dùng: ${currentUser.username}\n` +
+                `Email: ${currentUser.email}`
+            );
+            window.location.href = `mailto:hoai741412@gmail.com?subject=${subject}&body=${body}`;
+
+            answerOutput.textContent = "Vui lòng nhấn 'Send' trong ứng dụng email để hoàn tất gửi câu hỏi!";
+            document.getElementById("questionInput").value = "";
+        }
+
+        // Lưu thông tin ngân hàng
+        document.getElementById('bankForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (!currentUser) return;
+            const fullName = document.getElementById('fullName').value;
+            const accountNumber = document.getElementById('accountNumber').value;
+            const bankName = document.getElementById('bankName').value;
+
+            if (!fullName || !accountNumber || !bankName) {
+                alert('Vui lòng điền đầy đủ thông tin!');
+                return;
+            }
+
+            currentUser.bankInfo = { fullName, accountNumber, bankName };
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            users = users.map(u => u.username === currentUser.username ? currentUser : u);
+            localStorage.setItem('users', JSON.stringify(users));
+            alert('Thông tin tài khoản ngân hàng đã được lưu!');
+            updateBankInfo();
+        });
+
+        // Hiển thị thông tin ngân hàng
+        function updateBankInfo() {
+            if (currentUser && currentUser.bankInfo && currentUser.bankInfo.fullName) {
+                document.getElementById('bankInfoDisplay').textContent = 
+                    `Họ và tên: ${currentUser.bankInfo.fullName}, Số tài khoản: ${currentUser.bankInfo.accountNumber}, Ngân hàng: ${currentUser.bankInfo.bankName}`;
+                document.getElementById('fullName').value = currentUser.bankInfo.fullName;
+                document.getElementById('accountNumber').value = currentUser.bankInfo.accountNumber;
+                document.getElementById('bankName').value = currentUser.bankInfo.bankName;
+            } else {
+                document.getElementById('bankInfoDisplay').textContent = 'Chưa có thông tin tài khoản ngân hàng.';
+            }
+        }
+
+        // Khởi tạo
+        if (currentUser) {
+            updateDashboard();
+            showSection('home');
+        }
+    </script>
+</body>
+</html>
